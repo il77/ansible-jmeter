@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  gather_facts: yes
+  connection: docker
+  remote_user: root
+  roles:
+    - role: jmeter

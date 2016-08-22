@@ -1,0 +1,28 @@
+---
+
+- name: Clean jmeter log
+  file: path={{ item.log_path }} state=absent
+  with_items: '{{ jmeter.testplans }}'
+
+- name: Delete report directory
+  file: path={{ item.report_path }} state=absent
+  with_items: '{{ jmeter.testplans }}'
+
+- name: Create report directory
+  file: path={{ item.report_path }} state=directory
+  with_items: '{{ jmeter.testplans }}'
+
+- name: Copy testplans dependency
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items: '{{ jmeter.testplans_dependency }}'
+
+- name: Start jmeter servers
+  command: "{{ jmeter.link }}/bin/jmeter-server -Djava.rmi.server.hostname={{ inventory_hostname}}"
+  when: "'jmeter-servers' in group_names"
+  async: 20
+  poll: 0
+
+- name: Start testplan
+  shell: "{{ jmeter.link }}/bin/jmeter -Djava.rmi.server.hostname={{ inventory_hostname}} -n -t {{ item.test_path }} -Ghost={{ item.host }} -Gusers={{ item.threads }} -Gduration={{ item.duration }} -R{{ groups['jmeter-servers'] | join(',') }} -X -l {{ item.log_path }} -e -o {{ item.report_path }} && sleep 1" 
+  with_items: '{{ jmeter.testplans }}'
+  when: "'jmeter-client' in group_names"

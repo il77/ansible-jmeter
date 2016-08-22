@@ -1,0 +1,36 @@
+---
+jmeter_version: 3.0
+jmeter:
+  download:
+    jmeter: https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-{{ jmeter_version }}.tgz
+    plugins_manager: https://jmeter-plugins.org/get/
+    cmdrunner: http://search.maven.org/remotecontent?filepath=kg/apc/cmdrunner/2.0/cmdrunner-2.0.jar
+
+  # Jmeter locate path
+  path: /opt
+
+  # Symlink for jmeter actual version
+  link: /opt/jmeter
+
+  # List plugins to be install
+  plugins:
+
+  # Var for generate .properties files
+  options:
+
+    #Vars for generate system.properties
+    system:
+
+    #Vars for generate reportgenerator.properties
+    reportgenerator:
+
+    #Vars for generate jmeter.properties
+    jmeter:
+
+  # Define test plans
+  testplans:
+
+  # Define all testplan dependency such as .csv file with login an password
+  testplans_dependency:
+
+

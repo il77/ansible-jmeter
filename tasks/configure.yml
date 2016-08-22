@@ -1,0 +1,9 @@
+---
+
+- name: Template .properties
+  template: src={{ item }}.properties.j2 dest={{ jmeter.link }}/bin/{{ item }}.properties
+  when: jmeter.options.{{ item }}|default(None) != None
+  with_items:
+    - jmeter
+    - system
+    - reportgenerator

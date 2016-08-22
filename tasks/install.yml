@@ -1,0 +1,37 @@
+---
+
+- name: Install java
+  package: name=java-1.7.0-openjdk
+  when: (ansible_os_family == "RedHat")
+
+
+- name: Install java
+  package: name=openjdk-7-jre update_cache=yes
+  when: (ansible_os_family == "Debian")
+
+
+- name: Dowload jmeter
+  get_url: url={{ jmeter.download.jmeter }} dest=/tmp/jmeter.tgz force=yes
+
+- name: Unarchive jmeter
+  unarchive: src=/tmp/jmeter.tgz dest={{ jmeter.path }} copy=no
+
+- name: Create symlink
+  file: src={{ jmeter.path }}/apache-jmeter-{{ jmeter_version }} dest={{ jmeter.link }} state=link
+
+- name: Install Jmeter plugins manager
+  get_url: url={{ jmeter.download.plugins_manager }} dest={{ jmeter.link }}/lib/ext
+  register: plugin
+
+- name: Install Jmeter cmdrunner
+  get_url: url={{ jmeter.download.cmdrunner }} dest={{ jmeter.link }}/lib
+
+- name: Create pluginmanagercmd.sh
+  command: java -cp {{ plugin.dest }} org.jmeterplugins.repository.PluginManagerCMDInstaller
+
+
+- name: Add plugins
+  command: "{{ jmeter.link }}/bin/PluginsManagerCMD.sh install {{ item }}"
+  with_items: "{{ jmeter.plugins }}"
+  async: 100 # Without async "PluginsManagerCMD.sh" don`t work correct
+
