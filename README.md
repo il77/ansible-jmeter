@@ -1,5 +1,7 @@
 Jmeter role
 =========
+[![Build Status](https://travis-ci.org/il77/ansible-jmeter.svg?branch=master)](https://travis-ci.org/il77/ansible-jmeter)
+
 This ansible role install, configure [Jmeter](http://jmeter.apache.org/) and start distributed tests.
 
 Requirements
