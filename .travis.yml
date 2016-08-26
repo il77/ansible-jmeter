@@ -18,6 +18,8 @@ before_install:
   # Build CentOS image to verify ansible role there
   - docker build --rm=true --tag=el-6 tests/centos-6
   - docker build --rm=true --tag=el-7 tests/centos-7
+  - docker build --rm=true --tag=debian-7 tests/debian-7
+  - docker build --rm=true --tag=debian-8 tests/debian-8
 
 install:
   # Install ansible
@@ -40,17 +42,21 @@ script:
   # Add container name in inventory file and check syntax of the playbook
   - echo centos-6 >> tests/inventory
   - echo centos-7 >> tests/inventory
+  - echo debian-7 >> tests/inventory
+  - echo debian-8 >> tests/inventory
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
   # Run container with SSH server
   - docker run -d --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --name centos-6 el-6
   - docker run -d --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --name centos-7 el-7
+  - docker run -d --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --name debian-7 debian-7
+  - docker run -d --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro --name debian-8 debian-8
 
   # Run playbook
   - ansible-playbook tests/test.yml -i tests/inventory --tags=install,configuration --sudo
 
   # Remove containers
-  - docker rm -f centos-6 centos-7
+  - docker rm -f centos-6 centos-7 debian-7 debian-8
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
